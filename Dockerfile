@@ -3,20 +3,26 @@
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["DeploymentRisks.csproj", "."]
-RUN dotnet restore "./DeploymentRisks.csproj"
+COPY DeploymentRisks/DeploymentRisks.csproj DeploymentRisks/
+RUN dotnet restore DeploymentRisks/DeploymentRisks.csproj
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "DeploymentRisks.csproj" -c Release -o /app/build
+WORKDIR /src/DeploymentRisks
+RUN dotnet build DeploymentRisks.csproj -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "DeploymentRisks.csproj" -c Release -o /app/publish
+RUN dotnet publish DeploymentRisks.csproj -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "DeploymentRisks.dll"]
+
+
+ARG buildno
+ARG gitcommithash
+
+RUN echo "Build number: $buildno"
+RUN echo "Based on commit: $gitcommithash"

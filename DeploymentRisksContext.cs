@@ -22,7 +22,11 @@ namespace DeploymentRisks
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=DeploymentRisks;Username=postgres;Password=qwerty123");
+                optionsBuilder.UseNpgsql("Host=host.docker.internal;Port=5432;Database=DeploymentRisks;Username=postgres;Password=qwerty123", builder =>
+                {
+                    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+                });
+                base.OnConfiguring(optionsBuilder);                
             }
         }
 

@@ -26,7 +26,7 @@ namespace DeploymentRisks.Controllers
             try
             {
                 using (DeploymentRisksContext db = new DeploymentRisksContext())
-                {
+                {                
                     var tasks = db.ToDoTasks.ToList();
                     if (tasks.Any())
                         model.TaskList = tasks;
@@ -35,7 +35,7 @@ namespace DeploymentRisks.Controllers
             }
             catch (Exception e)
             {
-                return Json(new { success = false, message = "Error - " + e.Message });
+                return Json(new { success = false, message = "Index Error - " + e + Environment.NewLine + "---0---" + e.StackTrace });
             }
         }
 
