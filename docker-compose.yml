@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  deploymentrisks:
+    image: degreez66/deploymentrisks:vo
+    build:
+      context: .
+      dockerfile: ./Dockerfile  
+      args:
+        buildno: 1
+        buildDate: ${buildDate}     
+        gitcommithash: ${gitcommithash}      
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: "DeploymentRisks"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "qwerty123"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432

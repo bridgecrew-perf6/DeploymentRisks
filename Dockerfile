@@ -6,10 +6,10 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY DeploymentRisks/DeploymentRisks.csproj DeploymentRisks/
-RUN dotnet restore DeploymentRisks/DeploymentRisks.csproj
+COPY ["DeploymentRisks.csproj", "."]
+RUN dotnet restore "./DeploymentRisks.csproj"
 COPY . .
-WORKDIR /src/DeploymentRisks
+WORKDIR "/src/."
 RUN dotnet build DeploymentRisks.csproj -c Release -o /app
 
 FROM build AS publish
@@ -20,9 +20,10 @@ WORKDIR /app
 COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "DeploymentRisks.dll"]
 
-
 ARG buildno
+ARG buildDate
 ARG gitcommithash
 
 RUN echo "Build number: $buildno"
+RUN echo "Build date: $buildDate"
 RUN echo "Based on commit: $gitcommithash"
